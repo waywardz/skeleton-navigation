@@ -1,20 +1,40 @@
 <template>
+  <require from="./components/name-input-field"></require>
   <section class="au-animate">
-    <h2>${heading}</h2>
+    <h5>All fields are required, but when one field loses focus they are all validated. I believe the appropriate
+      behavior should be that only the single field is validated regardless of the number of inputs in the
+      component.</h5>
     <form role="form" submit.delegate="submit()">
+
       <div class="form-group">
-        <label for="fn">First Name</label>
-        <input type="text" value.bind="firstName" class="form-control" id="fn" placeholder="first name">
+        <!-- Label -->
+        <div class="col-lg-1 col-md-1 form-label-align">
+          <label class="control-label">
+            Name (unexpected behavior): *
+          </label>
+        </div>
+        <name-input-field
+          firstNameValue.bind="nameValidationUnexpected.firstName & validate:customRules.nameValidation"
+          middleNameValue.bind="nameValidationUnexpected.middleName & validate:customRules.nameValidation"
+          lastNameValue.bind="nameValidationUnexpected.lastName & validate:customRules.nameValidation"></name-input-field>
       </div>
       <div class="form-group">
-        <label for="ln">Last Name</label>
-        <input type="text" value.bind="lastName" class="form-control" id="ln" placeholder="last name">
+        <!-- Label -->
+        <div class="col-lg-1 col-md-1 form-label-align">
+          <label class="control-label">
+            Name (expected behavior): *
+          </label>
+        </div>
+        <!-- workaround below -->
+        <name-input-field
+          custom-rules.bind="customRules.nameValidation"
+          validation-controller.bind="validationController"
+          object.bind="nameValidationExpected"
+          firstNameValue.bind="nameValidationExpected.firstName & validate:customRules.nameValidation"
+          middleNameValue.bind="nameValidationExpected.middleName & validate:customRules.nameValidation"
+          lastNameValue.bind="nameValidationExpected.lastName & validate:customRules.nameValidation"></name-input-field>
       </div>
-      <div class="form-group">
-        <label>Full Name</label>
-        <p class="help-block">${fullName | upper}</p>
-      </div>
-      <button type="submit" class="btn btn-default">Submit</button>
+      <button disabled type="submit" class="btn btn-default">Submit</button>
     </form>
   </section>
 </template>

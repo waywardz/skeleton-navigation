@@ -1,36 +1,37 @@
-//import {computedFrom} from 'aurelia-framework';
+import {inject, TemplatingEngine} from 'aurelia-framework';
+import {ValidationControllerFactory} from 'aurelia-validation';
+import {BootstrapFormRenderer} from './validation/bootstrap-form-renderer';
+import {CustomRules} from './validation/custom-rules';
 
+@inject(TemplatingEngine, ValidationControllerFactory, CustomRules)
 export class Welcome {
-  heading = 'Welcome to the Aurelia Navigation App';
-  firstName = 'John';
-  lastName = 'Doe';
-  previousValue = this.fullName;
 
-  //Getters can't be directly observed, so they must be dirty checked.
-  //However, if you tell Aurelia the dependencies, it no longer needs to dirty check the property.
-  //To optimize by declaring the properties that this getter is computed from, uncomment the line below
-  //as well as the corresponding import above.
-  //@computedFrom('firstName', 'lastName')
-  get fullName() {
-    return `${this.firstName} ${this.lastName}`;
+  nameValidationUnexpected = {
+    firstName: '',
+    middleName: '',
+    lastName: ''
+  };
+
+  nameValidationExpected = {
+    firstName: '',
+    middleName: '',
+    lastName: ''
+  };
+
+  /**
+   * Constructor for VM
+   *
+   * @param templatingEngine the templating engine
+   * @param validationControllerFactory the validation controller factory
+   * @param validationCustomRules validation custom rules
+   */
+  constructor(templatingEngine, validationControllerFactory, customRules) {
+    this.templatingEngine = templatingEngine;
+    this.validationController = validationControllerFactory.createForCurrentScope();
+    this.validationController.addRenderer(new BootstrapFormRenderer(this.templatingEngine, this));
+    this.customRules = customRules;
   }
 
   submit() {
-    this.previousValue = this.fullName;
-    // eslint-disable-next-line no-alert
-    alert(`Welcome, ${this.fullName}!`);
-  }
-
-  canDeactivate() {
-    if (this.fullName !== this.previousValue) {
-      // eslint-disable-next-line no-alert
-      return confirm('Are you sure you want to leave?');
-    }
-  }
-}
-
-export class UpperValueConverter {
-  toView(value) {
-    return value && value.toUpperCase();
   }
 }
